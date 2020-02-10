@@ -1,0 +1,4 @@
+name = "BackTesting"
+uuid = "805d4b0e-cb96-4b4e-ba6c-a4d592f4d697"
+authors = ["Hanyuan Hu <hoorex@outlook.com>"]
+version = "0.1.0"
