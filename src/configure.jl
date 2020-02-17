@@ -1,6 +1,6 @@
 module StrategyConfig
-    const data_file_name = "50etf.csv"
-    const data_folder = "C:/Users/hoore/Documents/data/20190704";
+    const data_file_name = "10001873_all.csv"
+    const data_folder = "/home/hanyuanh/Documents/data/";
 end
 
 module FMConfig

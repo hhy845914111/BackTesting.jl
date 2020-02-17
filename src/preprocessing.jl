@@ -1,11 +1,13 @@
-include("configure.jl")
-
 using Dates: hour, minute, second, Time, Date
 using CSV: read
 using Distributed
-addprocs(FMConfig.process_count)
+
+const BT_PROCS = addprocs(FMConfig.process_count)
+
+@everywhere const PKG_ROOT = "/home/hanyuanh/Documents/BackTesting/"
+
 @everywhere begin
-    include("orderbook.jl")
+    include("$PKG_ROOT/src/orderbook.jl")
     using Dates: Date
     using DataFrames
     using DataStructures: enqueue!, dequeue!
@@ -19,33 +21,16 @@ function load_data(data_folder::AbstractString, data_file::AbstractString,
     data_df = read("$data_folder/$data_file")
 
     rename!(data_df,
-        [:InstID, :LastPx, :OpenPx, :HighPx, :LowPx, :Volume, :Turnover, :OI,
-        :UpperLmt, :LowerLmt, :UpdateTime, :UpdateMillisec, :BP1, :BV1, :AP1, :AV1,
+        [:id, :InstID, :LastPx, :Volume, :OI,
+        :UpperLmt, :LowerLmt, :BP1, :BV1, :AP1, :AV1,
         :BP2, :BV2, :AP2, :AV2, :BP3, :BV3, :AP3, :AV3, :BP4, :BV4, :AP4, :AV4,
-        :BP5, :BV5, :AP5, :AV5]
+        :BP5, :BV5, :AP5, :AV5, :datetime]
     )
 
+    data_df.datetime = DateTime.(data_df.datetime, "yyyy-mm-dd H:M:S")
     data_df.InstID = Symbol.(data_df.InstID)
-    data_df = data_df[data_df.InstID .== inst_id, :]
 
-    convert_time(x, y) = Time(hour(x), minute(x), second(x), y)
-    data_df.tm = convert_time.(data_df[!, :UpdateTime], data_df[!, :UpdateMillisec])
-
-    select!(data_df, Not([:OpenPx, :HighPx, :LowPx, :Turnover, :UpdateTime, :UpdateMillisec, :InstID]))
-    div2int(x, y) = Int(div(x, y))
-
-    data_df[!, :LastPx] = @. div2int(data_df[!, :LastPx], 0.0001)
-    data_df[!, :UpperLmt] = @. div2int(data_df[!, :UpperLmt], 0.0001)
-    data_df[!, :LowerLmt] = @. div2int(data_df[!, :LowerLmt], 0.0001)
-    for i = 1 : 5
-        tsb = Symbol("BP$i")
-        data_df[!, tsb] = @. div2int(data_df[!, tsb], 0.0001)
-
-        tsb = Symbol("AP$i")
-        data_df[!, tsb] = @. div2int(data_df[!, tsb], 0.0001)
-    end
-
-    return data_df;
+    return data_df[data_df.InstID .== inst_id, :]
 end
 
 

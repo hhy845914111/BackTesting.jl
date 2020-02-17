@@ -1,21 +1,13 @@
-#module BackTesting
-
-using DataFrames
-using CSV
-using Dates
-
-include("accounting.jl")
 include("configure.jl")
-include("optimization.jl")
+
+include("orderbook.jl")
+include("accounting.jl")
 include("preprocessing.jl")
-include("reporting.jl")
-
-include("strategy.jl")
-
 #export run_one_test
 
 
 #function run_one_test(pre_args=(), pre_kwargs=(), ot_args=(), ot_kwargs=(), report_obj::T=TestReport where {T <: AbstractReport})::AbstractReport
+#=
 pre_args = ()
 pre_kwargs = ()
 ot_args = ()
@@ -48,3 +40,4 @@ end
 #end
 
 run_one_test()
+=#
