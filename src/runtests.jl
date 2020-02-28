@@ -5,7 +5,7 @@ include("matching.jl")
 
 using Serialization
 
-df = load_data(StrategyConfig.data_folder, StrategyConfig.data_file_name, Symbol(10001875))
+df = load_data(StrategyConfig.data_folder, StrategyConfig.data_file_name, Symbol(10001873))
 filter!(x -> x.BP2 > 0, df);
 #=
 @time odr_vec = gen_odrs(df, :sbc, Date(2020, 2, 5), 0.0001)
